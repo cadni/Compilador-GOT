@@ -1,0 +1,82 @@
+package clases;
+import java_cup.runtime.*;
+import javax.swing.JOptionPane;
+
+
+/*código que se usará para comenzar a parsear la entrada.*/
+
+parser code {:
+
+   
+
+   @Override
+    public void syntax_error(Symbol sy){
+        Token t=(Token)sy.value;
+    
+
+        done_parsing();
+        report_error("Error sintáctico cerca de \""+ t.getCadena()+"\" : ["+t.getRow()+" : "+t.getCol()+"]",null+" falta el simbolo "+t.toString());
+        
+        
+	}
+
+       public void report_error(String message, Object info) {
+     
+         StringBuilder m = new StringBuilder("Error");
+         
+            System.out.println(info.toString());
+        if("#7".equals(info.toString())){
+                message=("Error falta un =");
+            }
+        if("#3".equals(info.toString())){
+                message=("Falta el comando Udrazma");
+            }
+        if("#4".equals(info.toString())){
+                message=("Falta el comando Udrazma");
+            }
+        if("#5".equals(info.toString())){
+                message=("Falta  un operador de idioma Dothraki/Valyrio");
+            }
+
+        
+        m.append(" : "+message);
+        System.err.println(m);
+         JOptionPane.showMessageDialog(null, message);
+         
+     }
+        
+        
+
+    :};
+
+/*--------------------------------Terminales-------------------------------- */
+terminal FinSentencia,OperadorDothraki,OperadorValyrio,Asigna,Ejecutar;
+terminal Token Traduccion;
+
+/*--------------------------------No Terminales-------------------------------- */
+non terminal estructura,linea,dothraki,valyrio;
+
+/*--------------------------------Reglas Gramaticales-------------------------------- */
+start with estructura;
+/*--------------------------------Definimos como sera la estructura-------------------------------- */
+estructura ::= Ejecutar linea FinSentencia ;
+/*--------------------------------Definimos cada linea-------------------------------- */
+linea ::= dothraki|valyrio;
+dothraki ::= OperadorDothraki Asigna Traduccion:e
+              
+               {:
+                     RESULT= new Orden("Dothraki", e.getCadena());
+                   
+                :}
+            ;
+            
+valyrio ::= OperadorValyrio Asigna Traduccion:e  
+                  
+                 {:
+                     RESULT= new Orden("Valyrio", e.getCadena());
+                     
+                       
+                :}
+                ;
+          
+
